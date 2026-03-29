@@ -1,0 +1,24 @@
+﻿# --- AI & Vision ---
+torch==2.1.0
+torchvision==0.16.0
+--extra-index-url https://download.pytorch.org/whl/cu118
+opencv-python==4.8.1.78
+opencv-contrib-python==4.8.1.78
+insightface==0.7.3
+numpy==1.26.4
+scipy==1.11.4
+Pillow==10.1.0
+
+# --- Backend & API ---
+fastapi==0.104.1
+uvicorn==0.24.0
+pydantic==2.5.2
+python-multipart==0.0.6
+
+# --- Database ---
+psycopg2-binary==2.9.9
+sqlalchemy==2.0.23
+alembic==1.13.0
+
+# --- Utilities ---
+python-dotenv==1.0.0
