@@ -10,7 +10,6 @@ app = FaceAnalysis(name='buffalo_l', providers=['CPUExecutionProvider'])
 app.prepare(ctx_id=-1, det_size=(640, 640))
 
 def load_embeddings():
-    """Load all stored student embeddings"""
     embeddings = {}
     embed_dir = Path("../data/face_embeddings")
     for pkl_file in embed_dir.glob("*.pkl"):
@@ -22,16 +21,16 @@ def load_embeddings():
 known_embeddings = load_embeddings()
 
 def get_embedding(frame: np.ndarray):
-    """Improved face detection with resize fallback"""
+    """Improved face detection"""
     if frame is None:
         return None
     
-    # First try original frame
+    # Try original size
     faces = app.get(frame)
     if len(faces) > 0:
         return max(faces, key=lambda x: x.det_score).normed_embedding
     
-    # If no face found, resize image larger (helps a lot)
+    # Resize and try again (helps when face is small)
     h, w = frame.shape[:2]
     resized = cv2.resize(frame, (w*2, h*2), interpolation=cv2.INTER_CUBIC)
     faces = app.get(resized)
