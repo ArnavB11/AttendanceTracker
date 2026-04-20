@@ -7,7 +7,7 @@ from insightface.app import FaceAnalysis
 
 # Initialize InsightFace
 app = FaceAnalysis(name='buffalo_l', providers=['CPUExecutionProvider'])
-app.prepare(ctx_id=-1, det_size=(640, 640))
+app.prepare(ctx_id=-1, det_size=(480, 480))
 
 def load_embeddings():
     embeddings = {}
@@ -32,7 +32,8 @@ def get_embedding(frame: np.ndarray):
     
     # Resize and try again (helps when face is small)
     h, w = frame.shape[:2]
-    resized = cv2.resize(frame, (w*2, h*2), interpolation=cv2.INTER_CUBIC)
+    scale_factor = 1.5
+    resized = cv2.resize(frame, (int(w*scale_factor), int(h*scale_factor)), interpolation=cv2.INTER_LINEAR)
     faces = app.get(resized)
     
     if len(faces) > 0:
@@ -71,14 +72,15 @@ def get_all_embeddings(frame: np.ndarray):
     
     # Try resizing
     h, w = frame.shape[:2]
-    resized = cv2.resize(frame, (w*2, h*2), interpolation=cv2.INTER_CUBIC)
+    scale_factor = 1.5
+    resized = cv2.resize(frame, (int(w*scale_factor), int(h*scale_factor)), interpolation=cv2.INTER_LINEAR)
     faces = app.get(resized)
     
     if len(faces) > 0:
         print("   (Faces detected after resizing)")
         results = []
         for f in faces:
-            adjusted_bbox = [coord / 2.0 for coord in f.bbox]
+            adjusted_bbox = [coord / scale_factor for coord in f.bbox]
             results.append((f.normed_embedding, adjusted_bbox))
         return results
     

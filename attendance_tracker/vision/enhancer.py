@@ -70,7 +70,7 @@ def auto_zoom(frame: np.ndarray) -> np.ndarray:
         cropped_frame = frame[crop_y1:crop_y2, crop_x1:crop_x2]
         
         # Resize back to original dimensions for the "zoom" effect
-        zoomed_frame = cv2.resize(cropped_frame, (w_orig, h_orig), interpolation=cv2.INTER_CUBIC)
+        zoomed_frame = cv2.resize(cropped_frame, (w_orig, h_orig), interpolation=cv2.INTER_LINEAR)
         return zoomed_frame
         
     return frame
@@ -98,7 +98,8 @@ def enhance_for_recognition(frame: np.ndarray) -> np.ndarray:
     lap = cv2.Laplacian(sharpened, cv2.CV_64F, ksize=3)
     sharpened = cv2.addWeighted(sharpened, 1.0, np.clip(lap, 0, 255).astype(np.uint8), 0.8, 0)
     
-    # Final noise reduction
-    final = cv2.bilateralFilter(sharpened, d=9, sigmaColor=75, sigmaSpace=75)
+    # Final noise reduction skip (Bilateral is too slow for real-time CPU)
+    # Using lightweight Gaussian instead or just continuing
+    final = cv2.GaussianBlur(sharpened, (3, 3), 0)
     
     return final
