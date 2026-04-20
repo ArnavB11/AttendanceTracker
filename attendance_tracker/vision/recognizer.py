@@ -59,3 +59,49 @@ def recognize(frame: np.ndarray, threshold: float = 0.42):
     if best_sim > threshold:
         return best_name, best_sim
     return None, best_sim
+
+def get_all_embeddings(frame: np.ndarray):
+    """Returns a list of (embedding, bbox) for all detected faces"""
+    if frame is None:
+        return []
+    
+    faces = app.get(frame)
+    if len(faces) > 0:
+        return [(f.normed_embedding, f.bbox) for f in faces]
+    
+    # Try resizing
+    h, w = frame.shape[:2]
+    resized = cv2.resize(frame, (w*2, h*2), interpolation=cv2.INTER_CUBIC)
+    faces = app.get(resized)
+    
+    if len(faces) > 0:
+        print("   (Faces detected after resizing)")
+        results = []
+        for f in faces:
+            adjusted_bbox = [coord / 2.0 for coord in f.bbox]
+            results.append((f.normed_embedding, adjusted_bbox))
+        return results
+    
+    return []
+
+def recognize_all(frame: np.ndarray, threshold: float = 0.42):
+    """Return a list of (student_name, similarity, bbox)"""
+    detections = get_all_embeddings(frame)
+    results = []
+    
+    for embedding, bbox in detections:
+        best_name = None
+        best_sim = -1.0
+        
+        for name, known_emb in known_embeddings.items():
+            sim = 1 - cosine(embedding, known_emb)
+            if sim > best_sim:
+                best_sim = sim
+                best_name = name
+                
+        if best_sim > threshold:
+            results.append((best_name, best_sim, bbox))
+        else:
+            results.append(("Unknown", best_sim, bbox))
+            
+    return results

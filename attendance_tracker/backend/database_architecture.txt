@@ -1,0 +1,38 @@
+DATABASE ARCHITECTURE FOR ATTENDANCE TRACKER
+--------------------------------------------
+Target Audience: Backend Teammate
+
+Overview:
+The backend needs to orchestrate a dataset structure where the Computer Vision model can effortlessly link a person's raw facial embeddings to their full school information (Name, Admission Number, Class Section) without cluttering the mathematical processing pipeline. 
+
+Structure 1: The Students Database (students.csv)
+This is the primary lookup table for enrolled students. The Vision model will read this to know WHO a recognized face belongs to.
+Schema:
+    Admission_Number (Primary Key)
+    Full_Name
+    Class_Section
+    Registration_Date
+
+Structure 2: The Images Directory (data/demo_images or backend/images)
+Store the raw JPEG images with the filename strictly matching the Admission_Number.
+Format:
+    [Admission_Number].jpg (e.g., 2024001.jpg)
+Why?: If the vision algorithmic teammate updates the model in the future, they can re-run enrollment over all JPEGs effortlessly.
+
+Structure 3: The Face Embeddings (data/face_embeddings/)
+The Computer Vision script will automatically convert the JPEGs into mathematical matrices safely stored as `.pkl` files named `[Admission_Number].pkl`. You do not need to touch these on the backend!
+
+Structure 4: The Daily Attendance Log (attendance_log.csv or your SQL equivalent)
+When the camera detects a face (e.g., embedding matches Admission Number 2024001), the Python script will append a row here.
+Schema:
+    Attendance_ID (Primary Key/Auto-Increment)
+    Admission_Number (Foreign Key)
+    Full_Name
+    Class_Section
+    Date (YYYY-MM-DD)
+    Time (HH:MM:SS)
+    Status (Present)
+
+Frontend Communication:
+- The Frontend teammate should fetch from `Structure 1` to render a class roster.
+- The Frontend teammate should fetch from `Structure 4` to render today's live feed attendance sheet.

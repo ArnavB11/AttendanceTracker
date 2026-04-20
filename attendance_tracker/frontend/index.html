@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Attendance System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="background-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Automated <span>Attendance</span> Scanner</h1>
+            <p>Stand in front of the camera to mark your presence.</p>
+        </div>
+
+        <div class="main-content">
+            <div class="video-section glass-panel">
+                <div class="video-wrapper">
+                    <video id="cameraFeed" autoplay playsinline></video>
+                    <div class="scanning-overlay hidden" id="scanOverlay">
+                        <div class="scanner-bar"></div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button id="scanBtn" class="primary-btn">Initialize Scanner</button>
+                    <p id="statusMsg" class="status-msg">Camera Offline</p>
+                </div>
+            </div>
+
+            <div class="results-section glass-panel">
+                <h2>Live Attendance Log</h2>
+                <div class="attendance-list" id="attendanceList">
+                    <!-- Javascript will inject list items here -->
+                    <div class="empty-state" id="emptyState">No students scanned yet.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
